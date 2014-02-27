@@ -36,6 +36,7 @@ namespace JohJSON
 
 	public class JSONNode
 	{
+
 		public NodeType nodeType = NodeType.VALUE;
 		internal string textVal;
 
@@ -73,6 +74,26 @@ namespace JohJSON
 			}
 		}
 
+		public int asInt{
+			get{ 
+				return (int)asNumber;
+			}
+
+			set{ 
+				asNumber = value;
+			}
+		}
+
+		public float asFloat{
+			get{ 
+				return (float)asNumber;
+			}
+
+			set{ 
+				asNumber = value;
+			}
+		}
+
 		public int length { 
 			get {
 				if (next == null)
@@ -97,7 +118,7 @@ namespace JohJSON
 		public JSONNode this [int pKey] {
 			get {
 				MakeList(pKey);
-				if (Math.Round(numberVal) == pKey)
+				if ((int)numberVal == pKey)
 				{
 					if (data == null)
 						data = new JSONNode();
@@ -118,7 +139,7 @@ namespace JohJSON
 			}
 			set {
 				MakeList(pKey);
-				if (numberVal == pKey)
+				if ((int)numberVal == pKey)
 				{
 
 					data = value;
@@ -205,6 +226,11 @@ namespace JohJSON
 		{
 			var w = new JSONNodeWriter();
 			return w.WriteToString(this);
+		}
+
+		public static JSONNode CreateFromString(string pString ){
+			Generator g = new Generator();
+			return g.Generate(pString);
 		}
 	}
 }

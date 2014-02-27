@@ -23,7 +23,7 @@
 using NUnit.Framework;
 using System;
 using System.IO;
-
+using System.Collections.Generic;
 namespace JohJSON
 {
 	[TestFixture()]
@@ -35,6 +35,7 @@ namespace JohJSON
 		[Test()]
 		public void TokenizerBasicTests()
 		{
+			Console.WriteLine("#### TokenizerBasicTests");
 			Tokenizer t = new Tokenizer();
 			var list = t.ParseText(new System.IO.StringReader(BASIC_OBJECT));
 			Assert.AreEqual("{", list[0]);
@@ -50,6 +51,7 @@ namespace JohJSON
 		[Test()] 
 		public void GeneratorBasicTest()
 		{
+			Console.WriteLine("#### GeneratorBasicTest");
 			Generator g = new Generator();
 
 			var node = g.Generate(BASIC_OBJECT);
@@ -60,6 +62,7 @@ namespace JohJSON
 		[Test()]
 		public void SpecialTest()
 		{
+			Console.WriteLine("#### SpecialTest");
 			JSONNode n = new JSONNode();
 			n["root"]["D"][0].asText = "1";
 			n["root"]["D"][1].asText = "1";
@@ -87,6 +90,7 @@ namespace JohJSON
 		[Test()]
 		public void PropertyExists()
 		{
+			Console.WriteLine("#### PropertyExists");
 			JSONNode n = new JSONNode();
 			n["root"]["D"][0].asText = "1";
 			n["root"]["D"][1].asText = "1";
@@ -102,6 +106,54 @@ namespace JohJSON
 			Assert.IsTrue(n["root"].PropertyExists("F"));
 			Assert.IsFalse(n["root"].PropertyExists("Q"));
 			Assert.IsFalse(n["root"]["D"][0].PropertyExists("Q"));
+		}
+
+		[Test()]
+		public void SaveLoad(){
+			Console.WriteLine("#### SaveLoad");
+			List<string> s = new List<string>{
+				"one", "two", "three", "four", "five"
+			};
+
+			JSONNode n = new JSONNode();
+
+			SaveArray(n["saved numbers"], s);
+			SaveArray(n["saved"][0], s);
+			var json = n.ToString();
+
+			JSONNode loaded = JSONNode.CreateFromString(json);
+
+			Assert.AreEqual(loaded.ToString(), json);
+
+			List<string> tmpList = new List<string>();
+			LoadArray(loaded["saved numbers"], tmpList);
+			for (int i = 0; i < s.Count; ++i){
+				Assert.AreEqual(s[i], tmpList[i]);
+			}
+			tmpList.Clear();
+		
+			LoadArray(loaded["saved"][0], tmpList);
+			for (int i = 0; i < s.Count; ++i){
+				Assert.AreEqual(s[i], tmpList[i]);
+			}
+
+			tmpList.Clear();
+			Console.Write(json);
+		
+		}
+		void SaveArray(JSONNode pOutput, List<string> input){
+			for (int i = 0; i < input.Count; ++i){
+				pOutput[i].asText = input[i];
+			}
+		}
+
+		void LoadArray(JSONNode pInput, List<string> output)
+		{
+			for (int i = 0; i < pInput.length; i++)
+			{
+				var str = pInput[i].asText;
+				output.Add(str);
+			}
 		}
 	}
 }

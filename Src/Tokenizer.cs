@@ -30,7 +30,7 @@ namespace JohJSON
 	{
 		const int BUFFER_SIZE = 4096;
 		public char[] buffer = new char[BUFFER_SIZE];
-		readonly StringBuilder currentToken = new StringBuilder();
+		StringBuilder currentToken = new StringBuilder();
 		bool insideQuotes = false;
 		bool escape = false;
 		readonly List<string> result = new List<string>();
@@ -167,7 +167,7 @@ namespace JohJSON
 			{
 				result.Add(currentToken.ToString());
 			}
-			currentToken.Clear();
+			currentToken = new StringBuilder();
 		}
 
 		void AddLetter(char c)
