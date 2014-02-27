@@ -188,6 +188,19 @@ namespace JohJSON
 			}
 		}
 
+		public bool PropertyExists(string pName)
+		{
+			if (this.nodeType == NodeType.DICTIONARY)
+			{
+				if (textVal == pName)
+					return true;
+				if (next == null)
+					return false;
+				return next.PropertyExists(pName);
+			}
+			return false;
+		}
+
 		public override string ToString()
 		{
 			var w = new JSONNodeWriter();

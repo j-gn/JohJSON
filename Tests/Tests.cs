@@ -23,14 +23,15 @@
 using NUnit.Framework;
 using System;
 using System.IO;
+
 namespace JohJSON
 {
 	[TestFixture()]
 	public class Tests
 	{
-
 		const string BASIC_OBJECT = "{\"root\":10}";
 		const string BASIC_ARRAY = "[\"name\",10, false]";
+
 		[Test()]
 		public void TokenizerBasicTests()
 		{
@@ -47,15 +48,18 @@ namespace JohJSON
 		}
 
 		[Test()] 
-		public void GeneratorBasicTest(){
+		public void GeneratorBasicTest()
+		{
 			Generator g = new Generator();
 
 			var node = g.Generate(BASIC_OBJECT);
 			Assert.AreEqual(NodeType.DICTIONARY, node.nodeType);
 			Assert.AreEqual(10, node.data.asNumber);
 		}
+
 		[Test()]
-		public void SpecialTest(){
+		public void SpecialTest()
+		{
 			JSONNode n = new JSONNode();
 			n["root"]["D"][0].asText = "1";
 			n["root"]["D"][1].asText = "1";
@@ -73,11 +77,31 @@ namespace JohJSON
 			Console.WriteLine(json);
 			Tokenizer w = new Tokenizer();
 			var result = w.ParseText(new StringReader(json));
-			foreach(var s in result)
+			foreach (var s in result)
 				Console.WriteLine(s);
 			Generator g = new Generator();
 			var newNode = g.Generate(json);
 			Console.WriteLine("OUT" + newNode["root"]["D"][5]["qwert"].asText);
+		}
+
+		[Test()]
+		public void PropertyExists()
+		{
+			JSONNode n = new JSONNode();
+			n["root"]["D"][0].asText = "1";
+			n["root"]["D"][1].asText = "1";
+			n["root"]["D"][2].asText = "1";
+			n["root"]["D"][3].asText = "1";
+			n["root"]["D"][4].asText = "1";
+			n["root"]["D"][5]["qwert"].asText = "hundred";
+			n["root"]["E"].asNumber = 1;
+			n["root"]["G"].asNumber = 2;
+			n["root"]["F"].asNumber = 3;
+			n["root"]["myObjecy"]["test Array"][0].asText = "text";
+			Assert.IsTrue(n.PropertyExists("root"));
+			Assert.IsTrue(n["root"].PropertyExists("F"));
+			Assert.IsFalse(n["root"].PropertyExists("Q"));
+			Assert.IsFalse(n["root"]["D"][0].PropertyExists("Q"));
 		}
 	}
 }
