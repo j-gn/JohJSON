@@ -107,6 +107,28 @@ namespace JohJSON
 			Assert.IsFalse(n["root"].PropertyExists("Q"));
 			Assert.IsFalse(n["root"]["D"][0].PropertyExists("Q"));
 		}
+		[Test()]
+		public void HeroTestA(){
+	
+			string data = "{\"playerInfo\":{\"cash\":10,\"diamonds\":10,\"selectedAttributes\":[\"StandardSubmarine 2\"],\"attributes\":[\"StandardSubmarine 2\",\"StandardSubmarine\"]}}";
+			var loaded = JSONNode.CreateFromString(data).ToString();
+			Assert.AreEqual(data, loaded);
+		}
+		[Test()]
+		public void HeroTestB()
+		{
+
+			JSONNode n = new JSONNode();
+			n["playerInfo"]["cash"].asInt = 10;
+			n["playerInfo"]["diamonds"].asInt = 10;
+			n["playerInfo"]["selectedAttributes"][0].asText = "StandardSubmarine 2";
+			n["playerInfo"]["attributes"][0].asText = "StandardSubmarine";
+			n["playerInfo"]["attributes"][1].asText = "StandardSubmarine 2";
+
+			string data = "{\"playerInfo\":{\"cash\":10,\"diamonds\":10,\"selectedAttributes\":[\"StandardSubmarine 2\"],\"attributes\":[\"StandardSubmarine\",\"StandardSubmarine 2\"]}}";
+
+			Assert.AreEqual(n.ToString() ,data);
+		}
 
 		[Test()]
 		public void SaveLoad(){
@@ -115,17 +137,20 @@ namespace JohJSON
 				"one", "two", "three", "four", "five"
 			};
 
-			JSONNode n = new JSONNode();
+			JSONNode n = new JSONNode()["root"];
 
+			n["cash"].asInt = 10;
+			n["diamonds"].asInt = 100;
 			SaveArray(n["saved numbers"], s);
 			SaveArray(n["saved"][0], s);
-			var json = n.ToString();
 
+			var json = n.ToString();
 			JSONNode loaded = JSONNode.CreateFromString(json);
 
 			Assert.AreEqual(loaded.ToString(), json);
-
+			Console.WriteLine(json);
 			List<string> tmpList = new List<string>();
+
 			LoadArray(loaded["saved numbers"], tmpList);
 			for (int i = 0; i < s.Count; ++i){
 				Assert.AreEqual(s[i], tmpList[i]);

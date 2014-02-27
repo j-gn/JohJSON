@@ -37,7 +37,7 @@ namespace JohJSON
 	public class JSONNode
 	{
 
-		public NodeType nodeType = NodeType.VALUE;
+		public NodeType nodeType;
 		internal string textVal;
 
 		public string asText {
