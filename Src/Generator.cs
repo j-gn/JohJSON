@@ -56,7 +56,9 @@ namespace JohJSON
 					return ParseList();
 				case "null":
 					tokens.Dequeue();
-					return null;
+					return new JSONNode{
+						nodeType = NodeType.NULL
+					};
 				case "\"":
 					return new JSONNode
 					{

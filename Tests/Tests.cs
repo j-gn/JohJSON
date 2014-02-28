@@ -134,7 +134,7 @@ namespace JohJSON
 		public void SaveLoad(){
 			Console.WriteLine("#### SaveLoad");
 			List<string> s = new List<string>{
-				"one", "two", "three", "four", "five"
+				"one", "two", "three", null, "five"
 			};
 
 			JSONNode n = new JSONNode()["root"];
@@ -166,6 +166,7 @@ namespace JohJSON
 			Console.Write(json);
 		
 		}
+
 		void SaveArray(JSONNode pOutput, List<string> input){
 			for (int i = 0; i < input.Count; ++i){
 				pOutput[i].asText = input[i];
@@ -179,6 +180,16 @@ namespace JohJSON
 				var str = pInput[i].asText;
 				output.Add(str);
 			}
+		}
+		[Test()]
+		public void NullTest(){
+			string json = "{\"list with null\":[0,1,2,3,null],\"nullfield\":null,\"nested\":{\"stuff\":null}}";
+			var node = JSONNode.CreateFromString(json);
+			Assert.AreEqual(node.ToString(), json);
+
+			json = "null";
+			node = JSONNode.CreateFromString(json);
+			Assert.AreEqual(node.ToString(), json);
 		}
 	}
 }

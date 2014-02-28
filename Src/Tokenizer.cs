@@ -138,6 +138,7 @@ namespace JohJSON
 				}
 
 			} while(count == BUFFER_SIZE);
+			PushWord();
 			return result;
 		}
 

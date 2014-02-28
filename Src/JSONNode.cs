@@ -26,6 +26,7 @@ namespace JohJSON
 {
 	public enum NodeType
 	{
+		NULL,
 		LIST,
 		DICTIONARY,
 		VALUE,
@@ -45,7 +46,12 @@ namespace JohJSON
 				return textVal;
 			}
 			set {
-				nodeType = NodeType.TEXT;
+
+				if (value == null)
+					nodeType = NodeType.NULL;
+				else
+					nodeType = NodeType.TEXT;
+
 				textVal = value;
 			}
 		}
@@ -115,47 +121,9 @@ namespace JohJSON
 			nodeType = NodeType.LIST;
 		}
 
-		public JSONNode this [int pKey] {
-			get {
-				MakeList(pKey);
-				if ((int)numberVal == pKey)
-				{
-					if (data == null)
-						data = new JSONNode();
-
-					return data;
-				}
-				else
-				{
-					if (next == null)
-					{
-						next = new JSONNode
-						{
-							numberVal = pKey
-						};
-					}
-					return next[pKey];
-				}
-			}
-			set {
-				MakeList(pKey);
-				if ((int)numberVal == pKey)
-				{
-
-					data = value;
-				}
-				else
-				{
-					if (next == null)
-					{
-						next = new JSONNode
-						{
-							numberVal = pKey
-						};
-					}
-					next[pKey] = value;
-				}
-			}
+		void CreateNextNode()
+		{
+			next =  new JSONNode();
 		}
 
 		void MakeDictionary(string pKey)
@@ -167,25 +135,65 @@ namespace JohJSON
 			nodeType = NodeType.DICTIONARY;
 		}
 
+
+		public JSONNode this [int pKey] {
+			get {
+				MakeList(pKey);
+				if ((int)numberVal == pKey)
+				{
+					if (data == null)
+					{
+						data = new JSONNode
+						{ 
+							nodeType = NodeType.NULL,
+						};
+					}
+
+					return data;
+				}
+				else
+				{
+					if (next == null)
+						CreateNextNode();
+
+					return next[pKey];
+				}
+			}
+			set {
+				MakeList(pKey);
+				if ((int)numberVal == pKey)
+				{
+					data = value;
+				}
+				else
+				{
+					if (next == null)
+						CreateNextNode();
+
+					next[pKey] = value;
+				}
+			}
+		}
+
 		public JSONNode this [string pKey] {
 			get {
 
 				MakeDictionary(pKey);
 				if (textVal == pKey)
 				{
-					if (data == null)
-						data = new JSONNode();
+					if (data == null){
+						data = new JSONNode
+						{
+							nodeType = NodeType.NULL,
+						};
+					}
 					return data;
 				}
 				else
 				{
 					if (next == null)
-					{
-						next = new JSONNode
-						{
-							textVal = pKey
-						};
-					}
+						CreateNextNode();
+
 					return next[pKey];
 				}
 			}
@@ -198,12 +206,8 @@ namespace JohJSON
 				else
 				{
 					if (next == null)
-					{
-						next = new JSONNode
-						{
-							textVal = pKey
-						};
-					}
+						CreateNextNode();
+
 					next[pKey] = value;
 				}
 			}
@@ -217,6 +221,7 @@ namespace JohJSON
 					return true;
 				if (next == null)
 					return false;
+
 				return next.PropertyExists(pName);
 			}
 			return false;

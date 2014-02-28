@@ -67,7 +67,7 @@ namespace JohJSON
 
 		void WriteData(JSONNode pNode)
 		{
-			if (pNode == null)
+			if (pNode == null || pNode.nodeType == NodeType.NULL)
 			{
 				textWriter.Write("null");
 			}
