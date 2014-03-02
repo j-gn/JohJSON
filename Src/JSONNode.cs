@@ -37,7 +37,6 @@ namespace JohJSON
 
 	public class JSONNode
 	{
-
 		public NodeType nodeType;
 		internal string textVal;
 
@@ -80,22 +79,22 @@ namespace JohJSON
 			}
 		}
 
-		public int asInt{
-			get{ 
+		public int asInt {
+			get { 
 				return (int)asNumber;
 			}
 
-			set{ 
+			set { 
 				asNumber = value;
 			}
 		}
 
-		public float asFloat{
-			get{ 
+		public float asFloat {
+			get { 
 				return (float)asNumber;
 			}
 
-			set{ 
+			set { 
 				asNumber = value;
 			}
 		}
@@ -123,7 +122,7 @@ namespace JohJSON
 
 		void CreateNextNode()
 		{
-			next =  new JSONNode();
+			next = new JSONNode();
 		}
 
 		void MakeDictionary(string pKey)
@@ -134,7 +133,6 @@ namespace JohJSON
 			}
 			nodeType = NodeType.DICTIONARY;
 		}
-
 
 		public JSONNode this [int pKey] {
 			get {
@@ -181,7 +179,8 @@ namespace JohJSON
 				MakeDictionary(pKey);
 				if (textVal == pKey)
 				{
-					if (data == null){
+					if (data == null)
+					{
 						data = new JSONNode
 						{
 							nodeType = NodeType.NULL,
@@ -233,7 +232,8 @@ namespace JohJSON
 			return w.WriteToString(this);
 		}
 
-		public static JSONNode CreateFromString(string pString ){
+		public static JSONNode CreateFromString(string pString)
+		{
 			Generator g = new Generator();
 			return g.Generate(pString);
 		}

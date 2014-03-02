@@ -24,6 +24,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Collections.Generic;
+
 namespace JohJSON
 {
 	[TestFixture()]
@@ -35,7 +36,6 @@ namespace JohJSON
 		[Test()]
 		public void TokenizerBasicTests()
 		{
-			Console.WriteLine("#### TokenizerBasicTests");
 			Tokenizer t = new Tokenizer();
 			var list = t.ParseText(new System.IO.StringReader(BASIC_OBJECT));
 			Assert.AreEqual("{", list[0]);
@@ -51,7 +51,6 @@ namespace JohJSON
 		[Test()] 
 		public void GeneratorBasicTest()
 		{
-			Console.WriteLine("#### GeneratorBasicTest");
 			Generator g = new Generator();
 
 			var node = g.Generate(BASIC_OBJECT);
@@ -62,7 +61,6 @@ namespace JohJSON
 		[Test()]
 		public void SpecialTest()
 		{
-			Console.WriteLine("#### SpecialTest");
 			JSONNode n = new JSONNode();
 			n["root"]["D"][0].asText = "1";
 			n["root"]["D"][1].asText = "1";
@@ -90,7 +88,6 @@ namespace JohJSON
 		[Test()]
 		public void PropertyExists()
 		{
-			Console.WriteLine("#### PropertyExists");
 			JSONNode n = new JSONNode();
 			n["root"]["D"][0].asText = "1";
 			n["root"]["D"][1].asText = "1";
@@ -107,13 +104,16 @@ namespace JohJSON
 			Assert.IsFalse(n["root"].PropertyExists("Q"));
 			Assert.IsFalse(n["root"]["D"][0].PropertyExists("Q"));
 		}
+
 		[Test()]
-		public void HeroTestA(){
+		public void HeroTestA()
+		{
 	
 			string data = "{\"playerInfo\":{\"cash\":10,\"diamonds\":10,\"selectedAttributes\":[\"StandardSubmarine 2\"],\"attributes\":[\"StandardSubmarine 2\",\"StandardSubmarine\"]}}";
 			var loaded = JSONNode.CreateFromString(data).ToString();
 			Assert.AreEqual(data, loaded);
 		}
+
 		[Test()]
 		public void HeroTestB()
 		{
@@ -127,13 +127,14 @@ namespace JohJSON
 
 			string data = "{\"playerInfo\":{\"cash\":10,\"diamonds\":10,\"selectedAttributes\":[\"StandardSubmarine 2\"],\"attributes\":[\"StandardSubmarine\",\"StandardSubmarine 2\"]}}";
 
-			Assert.AreEqual(n.ToString() ,data);
+			Assert.AreEqual(n.ToString(), data);
 		}
 
 		[Test()]
-		public void SaveLoad(){
-			Console.WriteLine("#### SaveLoad");
-			List<string> s = new List<string>{
+		public void SaveLoad()
+		{
+			List<string> s = new List<string>
+			{
 				"one", "two", "three", null, "five"
 			};
 
@@ -152,13 +153,15 @@ namespace JohJSON
 			List<string> tmpList = new List<string>();
 
 			LoadArray(loaded["saved numbers"], tmpList);
-			for (int i = 0; i < s.Count; ++i){
+			for (int i = 0; i < s.Count; ++i)
+			{
 				Assert.AreEqual(s[i], tmpList[i]);
 			}
 			tmpList.Clear();
 		
 			LoadArray(loaded["saved"][0], tmpList);
-			for (int i = 0; i < s.Count; ++i){
+			for (int i = 0; i < s.Count; ++i)
+			{
 				Assert.AreEqual(s[i], tmpList[i]);
 			}
 
@@ -167,8 +170,10 @@ namespace JohJSON
 		
 		}
 
-		void SaveArray(JSONNode pOutput, List<string> input){
-			for (int i = 0; i < input.Count; ++i){
+		void SaveArray(JSONNode pOutput, List<string> input)
+		{
+			for (int i = 0; i < input.Count; ++i)
+			{
 				pOutput[i].asText = input[i];
 			}
 		}
@@ -181,8 +186,22 @@ namespace JohJSON
 				output.Add(str);
 			}
 		}
+
 		[Test()]
-		public void NullTest(){
+		public void NullTest()
+		{
+			
+			JSONNode n = new JSONNode();
+
+			n["A"] = null;
+			Assert.AreEqual(NodeType.NULL, n["A"].nodeType);
+
+			n["A"].asText = null;
+			Assert.AreEqual(NodeType.NULL, n["A"].nodeType);
+
+			n["A"].asInt = 10;
+			Assert.AreEqual(NodeType.NUMBER, n["A"].nodeType);
+
 			string json = "{\"list with null\":[0,1,2,3,null],\"nullfield\":null,\"nested\":{\"stuff\":null}}";
 			var node = JSONNode.CreateFromString(json);
 			Assert.AreEqual(node.ToString(), json);
@@ -190,6 +209,24 @@ namespace JohJSON
 			json = "null";
 			node = JSONNode.CreateFromString(json);
 			Assert.AreEqual(node.ToString(), json);
+		}
+
+		[Test()]
+		public void BooleanTest()
+		{
+			JSONNode n;
+
+			n = JSONNode.CreateFromString("false");
+			Assert.IsFalse(n.asBool);
+
+			n = JSONNode.CreateFromString("true");
+			Assert.IsTrue(n.asBool);
+
+			n = JSONNode.CreateFromString("{ \"field\" : false }");
+			Assert.IsFalse(n["field"].asBool);
+
+			n = JSONNode.CreateFromString("{ \"field\" : true }");
+			Assert.IsTrue(n["field"].asBool);
 		}
 	}
 }
