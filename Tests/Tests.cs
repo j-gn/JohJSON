@@ -2,7 +2,7 @@
 //  Tests.cs
 //
 //  Author:
-//       Johannes Gotlen <johannes.gotlen@hellothere.se>
+//       Johannes Gotlen <johannesgotlen.se>
 //
 //  Copyright (c) 2014 
 //
@@ -78,8 +78,8 @@ namespace JohJSON
 			Console.WriteLine(json);
 			Tokenizer w = new Tokenizer();
 			var result = w.ParseText(new StringReader(json));
-			foreach (var s in result)
-				Console.WriteLine(s);
+			//foreach (var s in result)
+			//	Console.WriteLine(s);
 			Generator g = new Generator();
 			var newNode = g.Generate(json);
 			Console.WriteLine("OUT" + newNode["root"]["D"][5]["qwert"].asText);
@@ -227,6 +227,21 @@ namespace JohJSON
 
 			n = JSONNode.CreateFromString("{ \"field\" : true }");
 			Assert.IsTrue(n["field"].asBool);
+		}
+
+		[Test()]
+		public void CorrectCommaSeparationException()
+		{
+			JSONNode n;
+
+			bool exeptionThrown = false;
+			try{
+			n = JSONNode.CreateFromString("{ \"field\" : false, \"second field\": true \"third field\":false }");
+			}catch(Exception e){
+				exeptionThrown = true;
+			}
+			Assert.IsTrue(exeptionThrown);
+
 		}
 	}
 }

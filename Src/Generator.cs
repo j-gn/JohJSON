@@ -94,7 +94,7 @@ namespace JohJSON
 		{
 			if (pExpected != pActual)
 			{
-				throw new Exception("Unexpected token: '" + pActual + "' expected '" + pExpected + "'");
+				throw new Exception("Unexpected token: " + pActual + " expected: " + pExpected + "");
 			}
 		}
 
@@ -105,10 +105,9 @@ namespace JohJSON
 			ExpectToken(tokens.Dequeue(), "{");
 			while (tokens.Peek() != "}")
 			{
-				if (tokens.Peek() == ",")
+				if (first != null)
 				{
-					tokens.Dequeue();
-					continue;
+					ExpectToken(",", tokens.Dequeue());
 				}
 
 				var newNode = new JSONNode
@@ -153,12 +152,13 @@ namespace JohJSON
 			int i = 0;
 			while (tokens.Peek() != "]")
 			{
-				if (tokens.Peek() == ",")
+				Console.WriteLine("next 0" +tokens.Peek());
+				if (first != null)
 				{
-					tokens.Dequeue();
-					continue;
+					ExpectToken(",", tokens.Dequeue());
 				}
 
+				Console.WriteLine("next A" +tokens.Peek());
 				var newListNode = new JSONNode
 				{
 					nodeType = NodeType.LIST,
@@ -166,6 +166,7 @@ namespace JohJSON
 					data = ParseData()
 				};
 
+				Console.WriteLine("next B" +tokens.Peek());
 				if (first == null)
 					first = newListNode;
 				else
