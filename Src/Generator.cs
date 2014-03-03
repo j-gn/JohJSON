@@ -152,21 +152,18 @@ namespace JohJSON
 			int i = 0;
 			while (tokens.Peek() != "]")
 			{
-				Console.WriteLine("next 0" +tokens.Peek());
 				if (first != null)
 				{
 					ExpectToken(",", tokens.Dequeue());
 				}
 
-				Console.WriteLine("next A" +tokens.Peek());
 				var newListNode = new JSONNode
 				{
 					nodeType = NodeType.LIST,
 					numberVal = i++,
 					data = ParseData()
 				};
-
-				Console.WriteLine("next B" +tokens.Peek());
+						
 				if (first == null)
 					first = newListNode;
 				else
