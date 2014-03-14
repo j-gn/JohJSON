@@ -21,7 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 using System;
-
+using System.Collections.Generic;
 namespace JohJSON
 {
 	public enum NodeType
@@ -29,6 +29,8 @@ namespace JohJSON
 		NULL,
 		LIST,
 		DICTIONARY,
+		EMPTY_DICTIONARY,
+		EMPTY_LIST,
 		VALUE,
 		NUMBER,
 		TEXT,
@@ -226,12 +228,93 @@ namespace JohJSON
 			return false;
 		}
 
+		public bool ElementExists(int pIndex)
+		{
+			if (this.nodeType == NodeType.LIST)
+			{
+				if (numberVal == pIndex)
+					return true;
+				if (next == null)
+					return false;
+				return next.ElementExists(pIndex);
+			}
+			return false;
+		}
+
+		public DictionaryEnumerable dictionaryValues {
+			get {
+				return new DictionaryEnumerable(this);
+			}
+		}
+
+		public class DictionaryEnumerable : IEnumerable<KeyValuePair<string, JSONNode>>
+		{
+			JSONNode node;
+
+			public DictionaryEnumerable(JSONNode pNode)
+			{
+				node = pNode;
+			}
+
+			public IEnumerator<KeyValuePair<string, JSONNode>> GetEnumerator()
+			{
+				if (node.nodeType != NodeType.DICTIONARY)
+					yield break;
+				var t = node;
+				while (t != null)
+				{
+					yield return new KeyValuePair<string, JSONNode>(t.textVal, t.data);
+					t = t.next;
+				}
+			}
+
+			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+			{
+				return GetEnumerator();
+			}
+		}
+
+		
+		public ListEnumerable listValues {
+			get {
+				return new ListEnumerable(this);
+			}
+		}
+		
+		public class ListEnumerable : IEnumerable<JSONNode>
+		{
+			JSONNode node;
+
+			public ListEnumerable(JSONNode pNode)
+			{
+				node = pNode;
+			}
+
+			public IEnumerator<JSONNode> GetEnumerator()
+			{
+				if (node.nodeType != NodeType.LIST)
+					yield break;
+
+				var t = node;
+				while (t != null)
+				{
+					yield return t.data;
+					t = t.next;
+				}
+			}
+
+			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+			{
+				return GetEnumerator();
+			}
+		}
+		
 		public override string ToString()
 		{
 			var w = new JSONNodeWriter();
 			return w.WriteToString(this);
 		}
-
+		
 		public static JSONNode CreateFromString(string pString)
 		{
 			Generator g = new Generator();

@@ -103,29 +103,41 @@ namespace JohJSON
 			JSONNode first = null;
 			JSONNode current = null;
 			ExpectToken(tokens.Dequeue(), "{");
-			while (tokens.Peek() != "}")
+			if (tokens.Peek() == "}")
 			{
-				if (first != null)
+				first = new JSONNode
 				{
-					ExpectToken(",", tokens.Dequeue());
-				}
-
-				var newNode = new JSONNode
-				{
-					nodeType = NodeType.DICTIONARY,
-					textVal = ParseKey(),
-					data = ParseData(),
+					nodeType = NodeType.EMPTY_DICTIONARY,
+					textVal = "",
+					data = null
 				};
-
-				if (first == null)
-					first = newNode;
-				else
-					current.next = newNode;
-
-				current = newNode;
 			}
-			ExpectToken("}", tokens.Dequeue()); //remove [
+			else
+			{
+				while (tokens.Peek() != "}")
+				{
+					if (first != null)
+					{
+						ExpectToken(",", tokens.Dequeue());
+					}
 
+					var newNode = new JSONNode
+					{
+						nodeType = NodeType.DICTIONARY,
+						textVal = ParseKey(),
+						data = ParseData(),
+					};
+
+					if (first == null)
+						first = newNode;
+					else
+						current.next = newNode;
+
+					current = newNode;
+				}
+			}
+
+			ExpectToken("}", tokens.Dequeue()); //remove [
 			return first;
 		}
 
@@ -149,27 +161,39 @@ namespace JohJSON
 			JSONNode first = null;
 			JSONNode current = null;
 			ExpectToken("[", tokens.Dequeue()); //remove [
-			int i = 0;
-			while (tokens.Peek() != "]")
+			if (tokens.Peek() == "]")
 			{
-				if (first != null)
+				first = new JSONNode
 				{
-					ExpectToken(",", tokens.Dequeue());
-				}
-
-				var newListNode = new JSONNode
-				{
-					nodeType = NodeType.LIST,
-					numberVal = i++,
-					data = ParseData()
+					nodeType = NodeType.EMPTY_LIST,
+					textVal = "",
+					data = null
 				};
-						
-				if (first == null)
-					first = newListNode;
-				else
-					current.next = newListNode;
+			}
+			else
+			{
+				int i = 0;
+				while (tokens.Peek() != "]")
+				{
+					if (first != null)
+					{
+						ExpectToken(",", tokens.Dequeue());
+					}
 
-				current = newListNode;
+					var newListNode = new JSONNode
+					{
+						nodeType = NodeType.LIST,
+						numberVal = i++,
+						data = ParseData()
+					};
+						
+					if (first == null)
+						first = newListNode;
+					else
+						current.next = newListNode;
+
+					current = newListNode;
+				}
 			}
 			ExpectToken("]", tokens.Dequeue()); //remove [
 			return first;

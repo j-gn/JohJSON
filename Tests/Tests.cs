@@ -233,16 +233,47 @@ namespace JohJSON
 		public void CorrectCommaSeparationException()
 		{
 			JSONNode n;
-
 			bool exeptionThrown = false;
 			try{
-			n = JSONNode.CreateFromString("{ \"field\" : false, \"second field\": true \"third field\":false }");
+				n = JSONNode.CreateFromString("{ \"field\" : false, \"second field\": true \"third field\":false }");
 			}catch(Exception e){
 				exeptionThrown = true;
 			}
 			Assert.IsTrue(exeptionThrown);
 
 		}
+
+		[Test()]
+		public void EmptyArrays()
+		{
+			string s = "{\"field\":[],\"second field\":{}}";
+			JSONNode n = JSONNode.CreateFromString(s);
+			Assert.AreEqual(s, n.ToString());
+		}
+
+		[Test()]
+		public void Iterators()
+		{
+			JSONNode n = new JSONNode();
+			string[] values = { "a", "b", "c", "d", "e" };
+			n["root"]["D"][0].asText = values[0];
+			n["root"]["D"][1].asText = values[1];
+			n["root"]["D"][2].asText = values[2];
+			n["root"]["D"][3].asText = values[3];
+			n["root"]["D"][4].asText = values[4];
+			var e = values.GetEnumerator();
+			foreach (var c in n["root"]["D"].listValues)
+			{
+				e.MoveNext();
+				Assert.AreEqual(e.Current, c.asText);
+			}
+
+			foreach (var x in n["root"].dictionaryValues)
+			{
+				Assert.AreEqual(x.Key, "D");
+			}
+		}
+
 	}
 }
 

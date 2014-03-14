@@ -75,6 +75,9 @@ namespace JohJSON
 			{
 				switch (pNode.nodeType)
 				{
+					case NodeType.EMPTY_DICTIONARY:
+						textWriter.Write("{}");
+					break;
 					case NodeType.DICTIONARY:
 						textWriter.Write("{");
 						ToJSONString(pNode);
@@ -84,6 +87,9 @@ namespace JohJSON
 						textWriter.Write("[");
 						ToJSONString(pNode);
 						textWriter.Write("]");
+					break;
+					case NodeType.EMPTY_LIST:
+						textWriter.Write("[]");
 					break;
 					case NodeType.BOOL:
 						textWriter.Write(pNode.asBool.ToString());
