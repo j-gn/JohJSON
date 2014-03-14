@@ -249,6 +249,8 @@ namespace JohJSON
 			string s = "{\"field\":[],\"second field\":{}}";
 			JSONNode n = JSONNode.CreateFromString(s);
 			Assert.AreEqual(s, n.ToString());
+			Assert.AreEqual(0, n["field"].length);
+			Assert.AreEqual(0, n["second field"].length);
 		}
 
 		[Test()]

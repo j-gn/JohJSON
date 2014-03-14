@@ -103,10 +103,17 @@ namespace JohJSON
 
 		public int length { 
 			get {
-				if (next == null)
-					return 1;
+				if (nodeType == NodeType.LIST || nodeType == NodeType.DICTIONARY)
+				{
+					if (next == null)
+						return 1;
+					else
+						return next.length + 1;
+				}
 				else
-					return next.length + 1;
+				{
+					return 0;
+				}
 			}
 		}
 
