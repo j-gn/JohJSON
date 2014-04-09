@@ -37,11 +37,18 @@ namespace JohJSON
 			}
 			return textWriter.ToString();
 		}
-
+		public void WriteToStream(JSONNode pNode, Stream s)
+		{
+			using (textWriter = new StreamWriter(s))
+			{
+				WriteToStream(pNode, textWriter);
+			}
+		}
 		public void WriteToStream(JSONNode pNode, TextWriter pTextWriter)
 		{
 			textWriter = pTextWriter;
 			WriteData(pNode);
+			textWriter.Flush();
 		}
 
 		void ToJSONString(JSONNode pNode)

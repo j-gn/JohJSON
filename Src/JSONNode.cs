@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+
 namespace JohJSON
 {
 	public enum NodeType
@@ -281,13 +282,12 @@ namespace JohJSON
 			}
 		}
 
-		
 		public ListEnumerable listValues {
 			get {
 				return new ListEnumerable(this);
 			}
 		}
-		
+
 		public class ListEnumerable : IEnumerable<JSONNode>
 		{
 			JSONNode node;
@@ -315,17 +315,21 @@ namespace JohJSON
 				return GetEnumerator();
 			}
 		}
-		
+
 		public override string ToString()
 		{
 			var w = new JSONNodeWriter();
 			return w.WriteToString(this);
 		}
-		
+
 		public static JSONNode CreateFromString(string pString)
 		{
 			Generator g = new Generator();
 			return g.Generate(pString);
+		}
+
+		public static JSONNode empty {
+			get{ return new JSONNode{ nodeType = NodeType.NULL }; }
 		}
 	}
 }

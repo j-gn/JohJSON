@@ -31,21 +31,28 @@ namespace JohJSON
 	{
 		Tokenizer tokenizer = new Tokenizer();
 		Queue<string> tokens;
-
+		public JSONNode Generate(Stream s)
+		{
+			var t = tokenizer.ParseText(new StreamReader(s));
+			return Generate(t);
+		}
 		public JSONNode Generate(string s)
 		{
 			var t = tokenizer.ParseText(new StringReader(s));
-			tokens = new Queue<string>(t);
+			return Generate(t);
+		}
+		public JSONNode Generate(IEnumerable<string> pTokens){
+			tokens = new Queue<string>(pTokens);
 			if (tokens.Count > 0)
 			{
 				return ParseData();
 			}
 			else
 			{
-				throw new Exception("no tokens");
+				return JSONNode.empty;
 			}
 		}
-
+			
 		JSONNode ParseData()
 		{
 			switch (tokens.Peek())
@@ -143,12 +150,15 @@ namespace JohJSON
 
 		string ParseString()
 		{
+			var str = string.Empty;
 			ExpectToken("\"", tokens.Dequeue());
-			var str = tokens.Dequeue();
+			if (tokens.Peek() != "\"") //watch out for empty strings
+			{
+				str = tokens.Dequeue();
+			}
 			ExpectToken("\"", tokens.Dequeue());
 			return str;
 		}
-
 		string ParseKey()
 		{
 			var key = ParseString();

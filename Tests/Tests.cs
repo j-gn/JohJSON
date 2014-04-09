@@ -275,6 +275,60 @@ namespace JohJSON
 				Assert.AreEqual(x.Key, "D");
 			}
 		}
+		[Test()]
+		public void EmptyStrings()
+		{
+			JSONNode root = new JSONNode();
+			root["root"]["X"].asText = string.Empty;
+			root["root"]["Y"].asText = "";
+			root["root"]["Z"].asText = null;
+
+			Assert.AreEqual("", root["root"]["X"].asText);
+			Assert.AreEqual("", root["root"]["Y"].asText);
+			Assert.AreEqual(null, root["root"]["Z"].asText);
+		
+			string jsonString = "";
+			jsonString = root.ToString();
+			Console.WriteLine(jsonString);
+
+			var n = JSONNode.CreateFromString(jsonString);
+			Assert.AreEqual(string.Empty,  n["root"]["Y"].asText);
+			Assert.AreEqual("",  n["root"]["Y"].asText);
+			Assert.AreEqual(null,  n["root"]["Z"].asText);
+		}
+
+		[Test()]
+		public void FileIO()
+		{
+			JSONNode original = new JSONNode();
+			string[] values = { "a", "b", "c", "d", "e" };
+			original["root"]["D"][0].asText = values[0];
+			original["root"]["D"][1].asText = values[1];
+			original["root"]["D"][2].asText = values[2];
+			original["root"]["D"][3].asText = values[3];
+			original["root"]["D"][4].asText = values[4];
+
+			const string FILENAME = "tempFile.json";
+			File.Delete(FILENAME);
+			//write to file
+			JSONNodeWriter w = new JSONNodeWriter();
+			var fWrite = File.Open(FILENAME, FileMode.Create);
+			w.WriteToStream(original, fWrite);
+			fWrite.Close();
+
+
+			//read from file
+			Generator g = new Generator();
+			var fRead = File.Open(FILENAME, FileMode.Open);
+			JSONNode output = g.Generate(fRead);
+			fRead.Close();
+
+			var enumrtr = values.GetEnumerator();
+			for( int i=0; i < 5; i++ ){
+				enumrtr.MoveNext();
+				Assert.AreEqual(enumrtr.Current, output["root"]["D"][i].asText);
+			}
+		}
 
 	}
 }
