@@ -16,3 +16,5 @@ obj/*
 *.sln
 
 *.dll
+
+bin/Debug/tempFile.json
