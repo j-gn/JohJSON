@@ -62,7 +62,7 @@ namespace JohJSON
 					return new JSONNode
 					{
 						nodeType = NodeType.TEXT,
-						textVal = ParseString(),
+						_textVal = ParseString(),
 					};
 				default:
 					bool boolVal;
@@ -71,7 +71,7 @@ namespace JohJSON
 						tokens.Dequeue();
 						return new JSONNode
 						{
-							boolVal = boolVal,
+							_boolVal = boolVal,
 							nodeType = NodeType.BOOL,
 						};
 					}
@@ -81,7 +81,7 @@ namespace JohJSON
 						tokens.Dequeue();
 						return new JSONNode
 						{
-							numberVal = doubleVal,
+							_numberVal = doubleVal,
 							nodeType = NodeType.NUMBER,
 						};
 					}
@@ -107,7 +107,7 @@ namespace JohJSON
 				first = new JSONNode
 				{
 					nodeType = NodeType.EMPTY_DICTIONARY,
-					textVal = "",
+					_textVal = "",
 					data = null
 				};
 			}
@@ -123,7 +123,7 @@ namespace JohJSON
 					var newNode = new JSONNode
 					{
 						nodeType = NodeType.DICTIONARY,
-						textVal = ParseKey(),
+						_textVal = ParseKey(),
 						data = ParseData(),
 					};
 
@@ -168,7 +168,7 @@ namespace JohJSON
 				first = new JSONNode
 				{
 					nodeType = NodeType.EMPTY_LIST,
-					textVal = "",
+					_textVal = "",
 					data = null
 				};
 			}
@@ -185,7 +185,7 @@ namespace JohJSON
 					var newListNode = new JSONNode
 					{
 						nodeType = NodeType.LIST,
-						numberVal = i++,
+						_numberVal = i++,
 						data = ParseData()
 					};
 						

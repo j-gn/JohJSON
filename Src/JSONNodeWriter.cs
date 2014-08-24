@@ -26,8 +26,8 @@ namespace JohJSON
 			using (textWriter = new StringWriter())
 			{
 				WriteToStream(pNode, textWriter);
+				return textWriter.ToString();
 			}
-			return textWriter.ToString();
 		}
 		public void WriteToStream(JSONNode pNode, Stream s)
 		{

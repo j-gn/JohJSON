@@ -225,9 +225,12 @@ namespace JohJSON
 		public void CorrectCommaSeparationException()
 		{
 			bool exeptionThrown = false;
-			try{
+			try
+			{
 				JSONNode.CreateFromString("{ \"field\" : false, \"second field\": true \"third field\":false }");
-			}catch{
+			}
+			catch
+			{
 				exeptionThrown = true;
 			}
 			Assert.IsTrue(exeptionThrown);
@@ -266,6 +269,7 @@ namespace JohJSON
 				Assert.AreEqual(x.Key, "D");
 			}
 		}
+
 		[Test()]
 		public void EmptyStrings()
 		{
@@ -283,9 +287,9 @@ namespace JohJSON
 			Console.WriteLine(jsonString);
 
 			var n = JSONNode.CreateFromString(jsonString);
-			Assert.AreEqual(string.Empty,  n["root"]["Y"].asText);
-			Assert.AreEqual("",  n["root"]["Y"].asText);
-			Assert.AreEqual(null,  n["root"]["Z"].asText);
+			Assert.AreEqual(string.Empty, n["root"]["Y"].asText);
+			Assert.AreEqual("", n["root"]["Y"].asText);
+			Assert.AreEqual(null, n["root"]["Z"].asText);
 		}
 
 		[Test()]
@@ -315,12 +319,38 @@ namespace JohJSON
 			fRead.Close();
 
 			var enumrtr = values.GetEnumerator();
-			for( int i=0; i < 5; i++ ){
+			for (int i = 0; i < 5; i++)
+			{
 				enumrtr.MoveNext();
 				Assert.AreEqual(enumrtr.Current, output["root"]["D"][i].asText);
 			}
 		}
 
+		[Test()]
+		public void AnonymousRoot()
+		{
+			var node = new JohJSON.JSONNode();
+			node["text"].asText = "This is text";
+			Assert.AreEqual("{\"text\":\"This is text\"}", node.ToString());
+		}
+
+		[Test()]
+		public void StackBustingTest()
+		{
+			var head = new JohJSON.JSONNode();
+			head.nodeType = NodeType.LIST;
+			var node = head;
+			const int testval = 100000;
+			for (int i = 0; i < testval; i++)
+			{
+				node.next = new JSONNode();
+				node.next.asText = "::i" + i.ToString();
+				node = node.next;
+			}
+			//Console.Write(head);
+			Assert.AreEqual("::i" + (testval-1).ToString(), head.FindKeyByIndex(testval-2).asText);
+
+		}
 	}
 }
 

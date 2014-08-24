@@ -32,12 +32,16 @@ namespace JohJSON
 
 	public class JSONNode
 	{
-		public NodeType nodeType;
-		internal string textVal;
+		public NodeType nodeType { get; set; }
+
+		/// <summary>
+		/// Internal use only.
+		/// </summary>
+		internal string _textVal;
 
 		public string asText {
 			get {
-				return textVal;
+				return _textVal;
 			}
 			set {
 
@@ -46,31 +50,31 @@ namespace JohJSON
 				else
 					nodeType = NodeType.TEXT;
 
-				textVal = value;
+				_textVal = value;
 			}
 		}
 
-		internal bool boolVal;
+		internal bool _boolVal;
 
 		public bool asBool {
 			get {
-				return boolVal;
+				return _boolVal;
 			}
 			set {
 				nodeType = NodeType.BOOL;
-				boolVal = value;
+				_boolVal = value;
 			}
 		}
 
-		internal double numberVal;
+		internal double _numberVal;
 
 		public double asNumber {
 			get {
-				return numberVal;
+				return _numberVal;
 			}
 			set {
 				nodeType = NodeType.NUMBER;
-				numberVal = value;
+				_numberVal = value;
 			}
 		}
 
@@ -117,7 +121,7 @@ namespace JohJSON
 		{
 			if (nodeType != NodeType.LIST)
 			{
-				numberVal = pKey;
+				_numberVal = pKey;
 			}
 			nodeType = NodeType.LIST;
 		}
@@ -131,15 +135,51 @@ namespace JohJSON
 		{
 			if (nodeType != NodeType.DICTIONARY)
 			{
-				textVal = pKey;
+				_textVal = pKey;
 			}
 			nodeType = NodeType.DICTIONARY;
 		}
 
+		public JSONNode FindKeyByIndex(int pKey)
+		{
+			JSONNode self = this;
+			TryNextLabel:;
+
+			//make list
+			if (self.nodeType != NodeType.LIST)
+			{
+				_numberVal = pKey;
+			}
+			self.nodeType = NodeType.LIST;
+
+			if ((int)self._numberVal == pKey)
+			{
+				//create datanode
+				if (self.data == null)
+				{
+					self.data = new JSONNode
+					{ 
+						nodeType = NodeType.NULL,
+					};
+				}
+				return self.data;
+			}
+			else
+			{
+				//create index node
+				if (self.next == null)
+					self.next = new JSONNode();
+
+				self = self.next;
+				goto TryNextLabel;
+			}
+		}
+			
+
 		public JSONNode this [int pKey] {
 			get {
 				MakeList(pKey);
-				if ((int)numberVal == pKey)
+				if ((int)_numberVal == pKey)
 				{
 					if (data == null)
 					{
@@ -161,7 +201,7 @@ namespace JohJSON
 			}
 			set {
 				MakeList(pKey);
-				if ((int)numberVal == pKey)
+				if ((int)_numberVal == pKey)
 				{
 					data = value;
 				}
@@ -179,7 +219,7 @@ namespace JohJSON
 			get {
 
 				MakeDictionary(pKey);
-				if (textVal == pKey)
+				if (_textVal == pKey)
 				{
 					if (data == null)
 					{
@@ -200,7 +240,7 @@ namespace JohJSON
 			}
 			set {
 				MakeDictionary(pKey);
-				if (textVal == pKey)
+				if (_textVal == pKey)
 				{
 					data = value;
 				}
@@ -218,7 +258,7 @@ namespace JohJSON
 		{
 			if (this.nodeType == NodeType.DICTIONARY)
 			{
-				if (textVal == pName)
+				if (_textVal == pName)
 					return true;
 				if (next == null)
 					return false;
@@ -232,7 +272,7 @@ namespace JohJSON
 		{
 			if (this.nodeType == NodeType.LIST)
 			{
-				if (numberVal == pIndex)
+				if (_numberVal == pIndex)
 					return true;
 				if (next == null)
 					return false;
@@ -263,7 +303,7 @@ namespace JohJSON
 				var t = node;
 				while (t != null)
 				{
-					yield return new KeyValuePair<string, JSONNode>(t.textVal, t.data);
+					yield return new KeyValuePair<string, JSONNode>(t._textVal, t.data);
 					t = t.next;
 				}
 			}
