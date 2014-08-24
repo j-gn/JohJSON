@@ -117,33 +117,11 @@ namespace JohJSON
 		public JSONNode next = null;
 		public JSONNode data = null;
 
-		void MakeList(int pKey)
-		{
-			if (nodeType != NodeType.LIST)
-			{
-				_numberVal = pKey;
-			}
-			nodeType = NodeType.LIST;
-		}
-
-		void CreateNextNode()
-		{
-			next = new JSONNode();
-		}
-
-		void MakeDictionary(string pKey)
-		{
-			if (nodeType != NodeType.DICTIONARY)
-			{
-				_textVal = pKey;
-			}
-			nodeType = NodeType.DICTIONARY;
-		}
-
 		public JSONNode FindKeyByIndex(int pKey)
 		{
 			JSONNode self = this;
-			TryNextLabel:;
+			TryNextLabel:
+			;
 
 			//make list
 			if (self.nodeType != NodeType.LIST)
@@ -174,109 +152,120 @@ namespace JohJSON
 				goto TryNextLabel;
 			}
 		}
-			
+
 
 		public JSONNode this [int pKey] {
 			get {
-				MakeList(pKey);
-				if ((int)_numberVal == pKey)
-				{
-					if (data == null)
-					{
-						data = new JSONNode
-						{ 
-							nodeType = NodeType.NULL,
-						};
-					}
-
-					return data;
-				}
-				else
-				{
-					if (next == null)
-						CreateNextNode();
-
-					return next[pKey];
-				}
+				return FindNodeByIndex(pKey).data;
 			}
 			set {
-				MakeList(pKey);
-				if ((int)_numberVal == pKey)
-				{
-					data = value;
-				}
-				else
-				{
-					if (next == null)
-						CreateNextNode();
+				FindNodeByIndex(pKey).data = value;
+			}
+		}
+		JSONNode FindNodeByIndex(int pKey)
+		{
+			JSONNode self = this;
+			bool foundKey = false;
 
-					next[pKey] = value;
+			while (!foundKey)
+			{
+				if (((int)self._numberVal) == pKey && self.nodeType == NodeType.LIST)
+				{
+					foundKey = true;
+				}
+				else if (self.nodeType != NodeType.LIST)
+				{
+					self._numberVal = pKey;
+					self.nodeType = NodeType.LIST;
+					foundKey = true;
+
+				}
+				if (!foundKey)
+				{
+					if(self.next == null)
+						self.next = new JSONNode();
+					self = self.next;
 				}
 			}
+			if (self.data == null)
+			{
+				self.data = new JSONNode
+				{
+					nodeType = NodeType.NULL,
+				};
+			}
+			return self;
+		}
+
+		JSONNode FindNodeByString(string pKey)
+		{
+			JSONNode self = this;
+			bool foundKey = false;
+
+			while (!foundKey)
+			{
+				if (self._textVal == pKey && self.nodeType == NodeType.DICTIONARY)
+				{
+					foundKey = true;
+				}
+				else if (self.nodeType != NodeType.DICTIONARY)
+				{
+					self._textVal = pKey;
+					self.nodeType = NodeType.DICTIONARY;
+					foundKey = true;
+				
+				}
+				if (!foundKey)
+				{
+					if(self.next == null)
+						self.next = new JSONNode();
+					self = self.next;
+				}
+			}
+			if (self.data == null)
+			{
+				self.data = new JSONNode
+				{
+					nodeType = NodeType.NULL,
+				};
+			}
+			return self;
 		}
 
 		public JSONNode this [string pKey] {
 			get {
-
-				MakeDictionary(pKey);
-				if (_textVal == pKey)
-				{
-					if (data == null)
-					{
-						data = new JSONNode
-						{
-							nodeType = NodeType.NULL,
-						};
-					}
-					return data;
-				}
-				else
-				{
-					if (next == null)
-						CreateNextNode();
-
-					return next[pKey];
-				}
+				return FindNodeByString(pKey).data;
 			}
 			set {
-				MakeDictionary(pKey);
-				if (_textVal == pKey)
-				{
-					data = value;
-				}
-				else
-				{
-					if (next == null)
-						CreateNextNode();
-
-					next[pKey] = value;
-				}
+				FindNodeByString(pKey).data = value;
 			}
 		}
 
 		public bool PropertyExists(string pName)
 		{
-			if (this.nodeType == NodeType.DICTIONARY)
+			JSONNode self = this;
+			while (self.nodeType == NodeType.DICTIONARY)
 			{
-				if (_textVal == pName)
+				if (self._textVal == pName)
 					return true;
-				if (next == null)
+				if (self.next == null)
 					return false;
 
-				return next.PropertyExists(pName);
+				self = self.next;
 			}
 			return false;
 		}
 
 		public bool ElementExists(int pIndex)
 		{
-			if (this.nodeType == NodeType.LIST)
+			JSONNode self = this;
+			while (self.nodeType == NodeType.LIST)
 			{
-				if (_numberVal == pIndex)
+				if (self._numberVal == pIndex)
 					return true;
-				if (next == null)
+				if (self.next == null)
 					return false;
-				return next.ElementExists(pIndex);
+				self = self.next;
 			}
 			return false;
 		}

@@ -334,23 +334,23 @@ namespace JohJSON
 			Assert.AreEqual("{\"text\":\"This is text\"}", node.ToString());
 		}
 
-		[Test()]
-		public void StackBustingTest()
-		{
-			var head = new JohJSON.JSONNode();
-			head.nodeType = NodeType.LIST;
-			var node = head;
-			const int testval = 100000;
-			for (int i = 0; i < testval; i++)
-			{
-				node.next = new JSONNode();
-				node.next.asText = "::i" + i.ToString();
-				node = node.next;
-			}
-			//Console.Write(head);
-			Assert.AreEqual("::i" + (testval-1).ToString(), head.FindKeyByIndex(testval-2).asText);
-
-		}
+//		[Test()]
+//		public void StackBustingTest()
+//		{
+//			var head = new JohJSON.JSONNode();
+//			head.nodeType = NodeType.LIST;
+//			var node = head;
+//			const int testval = 100000;
+//			for (int i = 0; i < testval; i++)
+//			{
+//				node.next = new JSONNode();
+//				node.next.asText = "::i" + i.ToString();
+//				node = node.next;
+//			}
+//			//Console.Write(head);
+//			Assert.AreEqual("::i" + (testval-1).ToString(), head[testval-1].asText);
+//
+//		}
 	}
 }
 
