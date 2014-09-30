@@ -17,7 +17,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 
-namespace JohJSON
+namespace JohJSON.Tests
 {
 	[TestFixture()]
 	public class Tests
