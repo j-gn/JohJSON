@@ -4,14 +4,11 @@ Properties/AssemblyInfo.cs
 
 *.mdb
 
-obj/*
-
 *.dll
 
-bin/Debug/tempFile.json
+bin/
 
-bin/*
+obj/
 
-obj/*
+test-results/
 
-test-results/*
