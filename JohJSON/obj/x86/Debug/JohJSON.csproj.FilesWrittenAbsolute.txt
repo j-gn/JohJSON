@@ -1,4 +1,0 @@
-/Users/johannesgotlen/Projects/GitProjects/JohJSON/bin/Debug/JohJSON.dll.mdb
-/Users/johannesgotlen/Projects/GitProjects/JohJSON/bin/Debug/JohJSON.dll
-/Users/johannesgotlen/Projects/GitProjects/JohJSON/JohJSON/obj/x86/Debug/JohJSON.dll
-/Users/johannesgotlen/Projects/GitProjects/JohJSON/JohJSON/obj/x86/Debug/JohJSON.dll.mdb
