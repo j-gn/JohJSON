@@ -9,3 +9,9 @@ obj/*
 *.dll
 
 bin/Debug/tempFile.json
+
+bin/*
+
+obj/*
+
+test-results/*
