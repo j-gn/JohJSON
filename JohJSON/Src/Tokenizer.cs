@@ -18,6 +18,23 @@ using System.IO;
 
 namespace JohJSON
 {
+	public struct StringDelimiter {
+		public override bool Equals(object obj)
+		{
+			if (obj is StringDelimiter)
+				return true;
+			else
+				return false;
+		}
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+		public override string ToString()
+		{
+			return string.Format("[StringDelimiter]");
+		}
+	}
 	public class Tokenizer
 	{
 		const int BUFFER_SIZE = 4096;
@@ -25,9 +42,9 @@ namespace JohJSON
 		StringBuilder currentToken = new StringBuilder();
 		bool insideQuotes = false;
 		bool escape = false;
-		readonly List<string> result = new List<string>();
+		readonly List<object> result = new List<object>();
 
-		public List<string> ParseText(TextReader pReader)
+		public List<object> ParseText(TextReader pReader)
 		{
 			result.Clear();
 			int	count = 0;
@@ -56,7 +73,10 @@ namespace JohJSON
 							case 'f':
 								AddLetter('\f');
 							break;
-							default  :
+							case 'v':
+								AddLetter('\v');
+							break;
+							default:
 								AddLetter(c);
 							break;
 						}
@@ -71,27 +91,20 @@ namespace JohJSON
 							case '}':
 							case ']':
 							case ':':
-							case ',':
+							case ',': //Structural chars
 								if (insideQuotes)
 								{
 									AddLetter(c);
 								}
 								else
 								{
-									PushWord();
+									PushStringToken();
 									AddLetter(c);
-									PushWord();
+									PushStringToken();
 								}
 							break;
-							case '"':
-								if (!insideQuotes)
-								{
-									PushWord();
-									AddLetter(c);
-									PushWord();
-									insideQuotes = true;
-								}
-								else
+							case '"': //Quotes, string start stop
+								if (insideQuotes)
 								{
 									if (escape)
 									{
@@ -99,13 +112,20 @@ namespace JohJSON
 									}
 									else
 									{
-										PushWord();
-										AddLetter(c);
-										PushWord();
+										PushStringDelimiter();
 										insideQuotes = false;
 									}
 								}
+								else
+								{
+									PushStringDelimiter();
+									insideQuotes = true;
+								}
 							break;
+							case '\'': //Whitespace and garbage
+							case '\f':
+							case '\v':
+							case '\b':
 							case '\r':
 							case '\n':
 							case ' ':
@@ -130,7 +150,7 @@ namespace JohJSON
 				}
 
 			} while(count == BUFFER_SIZE);
-			PushWord();
+			PushStringToken();
 			return result;
 		}
 
@@ -144,6 +164,8 @@ namespace JohJSON
 			return false;
 		}
 
+
+
 		bool Contains(string pCollection, char pItem)
 		{
 			for (int i = 0; i < pCollection.Length; i++)
@@ -153,8 +175,13 @@ namespace JohJSON
 			}
 			return false;
 		}
+		void PushStringDelimiter()
+		{
+			PushStringToken();
+			result.Add(new StringDelimiter());
+		}
 
-		void PushWord()
+		void PushStringToken()
 		{
 			if (currentToken.Length > 0)
 			{

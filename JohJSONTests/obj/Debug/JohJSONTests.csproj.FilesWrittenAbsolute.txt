@@ -1,0 +1,7 @@
+/Users/johannesgotlen/Projects/GitProjects/JohJSON/JohJSONTests/bin/Debug/JohJSONTests.dll.mdb
+/Users/johannesgotlen/Projects/GitProjects/JohJSON/JohJSONTests/bin/Debug/JohJSONTests.dll
+/Users/johannesgotlen/Projects/GitProjects/JohJSON/JohJSONTests/obj/Debug/JohJSONTests.dll
+/Users/johannesgotlen/Projects/GitProjects/JohJSON/JohJSONTests/obj/Debug/JohJSONTests.dll.mdb
+/Users/johannesgotlen/Projects/GitProjects/JohJSON/JohJSONTests/bin/Debug/nunit.framework.dll
+/Users/johannesgotlen/Projects/GitProjects/JohJSON/JohJSONTests/bin/Debug/JohJSON.dll
+/Users/johannesgotlen/Projects/GitProjects/JohJSON/JohJSONTests/bin/Debug/JohJSON.dll.mdb

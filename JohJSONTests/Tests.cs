@@ -31,9 +31,9 @@ namespace JohJSON.Tests
 			Tokenizer t = new Tokenizer();
 			var list = t.ParseText(new System.IO.StringReader(BASIC_OBJECT));
 			Assert.AreEqual("{", list[0]);
-			Assert.AreEqual("\"", list[1]);
+			Assert.AreEqual(new StringDelimiter(), list[1]);
 			Assert.AreEqual("root", list[2]);
-			Assert.AreEqual("\"", list[3]);
+			Assert.AreEqual(new StringDelimiter(), list[3]);
 			Assert.AreEqual(":", list[4]);
 			Assert.AreEqual("10", list[5]);
 			Assert.AreEqual("}", list[6]);
@@ -331,7 +331,38 @@ namespace JohJSON.Tests
 		{
 			var node = new JohJSON.JSONNode();
 			node["text"].asText = "This is text";
+
 			Assert.AreEqual("{\"text\":\"This is text\"}", node.ToString());
+		}
+
+		void TestEsapeChar(char c){
+			string key = string.Format("\\{0}", c);
+			string testString = string.Format("{{\"{0}\":\"{0}\"}}", key);
+
+			//Tokenizer t = new Tokenizer();
+			//var tokens = string.Join("|", t.ParseText(new System.IO.StringReader(testString)).ConvertAll(x=>x.ToString()).ToArray());
+			//Console.WriteLine(tokens);
+			//Console.Write(json);
+
+			var json = JohJSON.JSONNode.CreateFromString(testString);
+			Assert.IsTrue( json.PropertyExists(c.ToString()));
+			Assert.AreEqual( json[c.ToString()].asText, c.ToString());
+		}
+
+		[Test()]
+		public void EscapeCharacters()
+		{
+		
+			TestEsapeChar('\"');
+			TestEsapeChar('\\');
+			TestEsapeChar('\n');
+			TestEsapeChar('\b');
+			TestEsapeChar('\r');
+			TestEsapeChar('\t');
+			TestEsapeChar('\v');
+			TestEsapeChar('\f');
+			TestEsapeChar('\'');
+
 		}
 
 //		[Test()]

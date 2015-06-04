@@ -21,8 +21,9 @@ namespace JohJSON
 {
 	public class Generator
 	{
+		StringDelimiter DELIMITER = new StringDelimiter();
 		Tokenizer tokenizer = new Tokenizer();
-		Queue<string> tokens;
+		Queue<object> tokens;
 		public JSONNode Generate(Stream s)
 		{
 			var t = tokenizer.ParseText(new StreamReader(s));
@@ -33,8 +34,8 @@ namespace JohJSON
 			var t = tokenizer.ParseText(new StringReader(s));
 			return Generate(t);
 		}
-		public JSONNode Generate(IEnumerable<string> pTokens){
-			tokens = new Queue<string>(pTokens);
+		public JSONNode Generate(IEnumerable<object> pTokens){
+			tokens = new Queue<object>(pTokens);
 			if (tokens.Count > 0)
 			{
 				return ParseData();
@@ -47,51 +48,59 @@ namespace JohJSON
 			
 		JSONNode ParseData()
 		{
-			switch (tokens.Peek())
+			var token = tokens.Peek();
+			var tokenStr = token as string;
+			if (token is StringDelimiter)
 			{
-				case "{":
-					return ParseDictionary();
-				case "[":
-					return ParseList();
-				case "null":
-					tokens.Dequeue();
-					return new JSONNode{
-						nodeType = NodeType.NULL
-					};
-				case "\"":
-					return new JSONNode
-					{
-						nodeType = NodeType.TEXT,
-						_textVal = ParseString(),
-					};
-				default:
-					bool boolVal;
-					if (bool.TryParse(tokens.Peek(), out boolVal))
-					{
+				return new JSONNode
+				{
+					nodeType = NodeType.TEXT,
+					_textVal = ParseString(),
+				};
+			}
+			else
+			{
+				switch (tokenStr)
+				{
+					case "{":
+						return ParseDictionary();
+					case "[":
+						return ParseList();
+					case "null":
 						tokens.Dequeue();
 						return new JSONNode
 						{
-							_boolVal = boolVal,
-							nodeType = NodeType.BOOL,
+							nodeType = NodeType.NULL
 						};
-					}
-					double doubleVal;
-					if (double.TryParse(tokens.Peek(), NumberStyles.Number, CultureInfo.InvariantCulture, out doubleVal))
-					{
-						tokens.Dequeue();
-						return new JSONNode
+					default:
+						bool boolVal;
+						if (bool.TryParse(tokenStr, out boolVal))
 						{
-							_numberVal = doubleVal,
-							nodeType = NodeType.NUMBER,
-						};
-					}
-					throw new Exception("Unexpected token: '" + tokens.Peek() + "'");
+							tokens.Dequeue();
+							return new JSONNode
+							{
+								_boolVal = boolVal,
+								nodeType = NodeType.BOOL,
+							};
+						}
+						double doubleVal;
+						if (double.TryParse(tokenStr, NumberStyles.Number, CultureInfo.InvariantCulture, out doubleVal))
+						{
+							tokens.Dequeue();
+							return new JSONNode
+							{
+								_numberVal = doubleVal,
+								nodeType = NodeType.NUMBER,
+							};
+						}
+						throw new Exception("Unexpected token: '" + tokens.Peek() + "'");
+				}
 			}
 		}
 
-		void ExpectToken(string pExpected, string pActual)
+		void ExpectToken(object pExpected, object pActual)
 		{
-			if (pExpected != pActual)
+			if (!pExpected.Equals(pActual))
 			{
 				throw new Exception("Unexpected token: " + pActual + " expected: " + pExpected + "");
 			}
@@ -102,7 +111,7 @@ namespace JohJSON
 			JSONNode first = null;
 			JSONNode current = null;
 			ExpectToken(tokens.Dequeue(), "{");
-			if (tokens.Peek() == "}")
+			if (tokens.Peek().ToString() == "}")
 			{
 				first = new JSONNode
 				{
@@ -113,7 +122,7 @@ namespace JohJSON
 			}
 			else
 			{
-				while (tokens.Peek() != "}")
+				while (tokens.Peek().ToString() != "}")
 				{
 					if (first != null)
 					{
@@ -126,6 +135,7 @@ namespace JohJSON
 						_textVal = ParseKey(),
 						data = ParseData(),
 					};
+					//Console.WriteLine("-> " + newNode._textVal + " || " + newNode.data);
 
 					if (first == null)
 						first = newNode;
@@ -139,16 +149,16 @@ namespace JohJSON
 			ExpectToken("}", tokens.Dequeue()); //remove [
 			return first;
 		}
-
 		string ParseString()
 		{
 			var str = string.Empty;
-			ExpectToken("\"", tokens.Dequeue());
-			if (tokens.Peek() != "\"") //watch out for empty strings
+			ExpectToken(DELIMITER, tokens.Dequeue());
+
+			if (!tokens.Peek().Equals(DELIMITER)) //watch out for empty strings
 			{
-				str = tokens.Dequeue();
+				str = tokens.Dequeue() as string;
 			}
-			ExpectToken("\"", tokens.Dequeue());
+			ExpectToken(DELIMITER, tokens.Dequeue());
 			return str;
 		}
 		string ParseKey()
@@ -163,7 +173,7 @@ namespace JohJSON
 			JSONNode first = null;
 			JSONNode current = null;
 			ExpectToken("[", tokens.Dequeue()); //remove [
-			if (tokens.Peek() == "]")
+			if (tokens.Peek().ToString() == "]")
 			{
 				first = new JSONNode
 				{
@@ -175,7 +185,7 @@ namespace JohJSON
 			else
 			{
 				int i = 0;
-				while (tokens.Peek() != "]")
+				while (tokens.Peek().ToString() != "]")
 				{
 					if (first != null)
 					{
