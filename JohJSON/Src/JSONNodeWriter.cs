@@ -114,6 +114,9 @@ namespace JohJSON
 			{
 				switch (c)
 				{
+					case '/':
+						result += "\\/";
+					break;
 					case '\\':
 						result += "\\\\";
 					break;
@@ -135,7 +138,7 @@ namespace JohJSON
 					case '\f':
 						result += "\\f";
 					break;
-					default   :
+					default:
 						result += c;
 					break;
 				}

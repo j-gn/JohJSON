@@ -1,6 +1,36 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="JohJSON/Src/Generator.cs">
+    <Files>
+      <File FileName="JohJSONTests/Tests.cs" Line="13" Column="13" />
+      <File FileName="JohJSON/Src/JSONNode.cs" Line="28" Column="28" />
+      <File FileName="JohJSON/Src/Tokenizer.cs" Line="2" Column="2" />
+      <File FileName="JohJSON/Src/Generator.cs" Line="28" Column="28" />
+      <File FileName="JohJSON/Src/JSONNodeWriter.cs" Line="25" Column="25" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="JohJSON" expanded="True">
+            <Node name="Src" expanded="True">
+              <Node name="Generator.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.NUnit.TestPad">
+        <State expanded="True" selected="True">
+          <Node name="JohJSONTests" expanded="True">
+            <Node name="JohJSON" expanded="True">
+              <Node name="Tests" expanded="True">
+                <Node name="Tests" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/johannesgotlen/Projects/GitProjects/FulJSON/Program.cs" line="293" column="1" />

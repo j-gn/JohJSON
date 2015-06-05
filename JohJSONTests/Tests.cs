@@ -335,33 +335,38 @@ namespace JohJSON.Tests
 			Assert.AreEqual("{\"text\":\"This is text\"}", node.ToString());
 		}
 
-		void TestEsapeChar(char c){
-			string key = string.Format("\\{0}", c);
-			string testString = string.Format("{{\"{0}\":\"{0}\"}}", key);
+		void TestEscapeChar(char c){
 
-			//Tokenizer t = new Tokenizer();
-			//var tokens = string.Join("|", t.ParseText(new System.IO.StringReader(testString)).ConvertAll(x=>x.ToString()).ToArray());
-			//Console.WriteLine(tokens);
-			//Console.Write(json);
+			var x = new JSONNode();
+			x[c.ToString()].asText = c.ToString();
+			string testString = x.ToString();
+			Console.WriteLine(testString);
+			var y = JSONNode.CreateFromString(testString);
+			Assert.AreEqual(x.ToString(), y.ToString());
+			Assert.AreEqual(y[c.ToString()].asText[0], c);
+			Assert.AreEqual(x[c.ToString()].asText[0], c);
 
-			var json = JohJSON.JSONNode.CreateFromString(testString);
-			Assert.IsTrue( json.PropertyExists(c.ToString()));
-			Assert.AreEqual( json[c.ToString()].asText, c.ToString());
 		}
 
 		[Test()]
 		public void EscapeCharacters()
 		{
 		
-			TestEsapeChar('\"');
-			TestEsapeChar('\\');
-			TestEsapeChar('\n');
-			TestEsapeChar('\b');
-			TestEsapeChar('\r');
-			TestEsapeChar('\t');
-			TestEsapeChar('\v');
-			TestEsapeChar('\f');
-			TestEsapeChar('\'');
+			TestEscapeChar('\"');
+			TestEscapeChar('/');
+			TestEscapeChar('"');
+			TestEscapeChar('\\');
+			TestEscapeChar('\n');
+			TestEscapeChar('\b');
+			TestEscapeChar('\r');
+			TestEscapeChar('\t');
+			TestEscapeChar('\v');
+			TestEscapeChar('\f');
+			TestEscapeChar('\'');
+			TestEscapeChar('\a');
+
+			//Not really sure how to handle this
+			TestEscapeChar('\u0012');
 
 		}
 

@@ -138,6 +138,7 @@ namespace JohJSON
 							case '\\':
 								if (insideQuotes)
 								{
+									//don't add this letter, only escape next
 									escape = true;
 								}
 							break;
